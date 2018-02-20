@@ -1,6 +1,10 @@
-./insertionsort
-./mergesort
-./shellsort
+/insertionsort
+/mergesort
+/shellsort
+
+/insertionsort.exe
+/mergesort.exe
+/shellsort.exe
 
 # Prerequisites
 *.d
