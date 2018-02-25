@@ -9,11 +9,14 @@ CFLAGS = -std=c++11 -c
 all: insertionsort shellsort mergesort
 
 #insertion sort program
-insertionsort: InsertionSortDriver.o
-	$(CC) InsertionSortDriver.o -o insertionsort
+insertionsort: LinkedList.o InsertionSortDriver.o
+	$(CC) LinkedList.o InsertionSortDriver.o -o insertionsort
 
 InsertionSortDriver.o:
 	$(CC) $(CFLAGS) InsertionSortDriver.cpp
+
+LinkedList.o:
+	$(CC) $(CFLAGS) LinkedList.cpp
 
 #shell sort program
 shellsort: ShellSortDriver.o
