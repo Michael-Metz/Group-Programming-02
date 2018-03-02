@@ -1,26 +1,7 @@
 #include <iostream>
+#include <cstdlib>
 
 using namespace std;
-
-int main(int arc, char *argv[]) {
-	int *nums = new int[arc];
-
-	for (int i = 0; i < arc; i++) {
-		nums[i] = (int)argv[i];
-	}
-
-	int n = arc / sizeof(argv[0]);
-
-	cout << "Array before sorting: \n";
-	printArray(nums, n);
-
-	shellSort(nums, n);
-
-	cout << "\nArray after sorting: \n";
-	printArray(nums, n);
-
-	return 0;
-}
 void printArray(int nums[], int n)
 {
 	for (int i = 0; i < n; i++)
@@ -40,5 +21,24 @@ int shellSort(int nums[], int n)
 			nums[k] = temp;
 		}
 	}
+	return 0;
+}
+int main(int arc, char *argv[]) {
+	int *nums = new int[arc];
+
+	for (int i = 0; i < arc; i++) {
+		nums[i] = atoi(argv[i]);
+	}
+
+	int n = arc / sizeof(argv[0]);
+
+	cout << "Array before sorting: \n";
+	printArray(nums, n);
+
+	shellSort(nums, n);
+
+	cout << "\nArray after sorting: \n";
+	printArray(nums, n);
+
 	return 0;
 }
