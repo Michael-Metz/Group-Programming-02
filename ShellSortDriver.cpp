@@ -8,21 +8,24 @@ void printArray(int nums[], int n)
 	for (int i = 0; i < n; i++)
 		cout << nums[i] << " ";
 }
-int shellSort(int nums[], int n)
-{
+long[] shellSort(long nums[], long n)
+{	//Starts with a large gap and then decreases
 	for (int g = n / 2; g > 0; g /= 2)
-	{
+	{	//gapped insertion sort for this gap size
 		for (int i = g; i < n; i += 1)
-		{
-			int temp = nums[i];
+		{	//add nums[i] to the sorted items
+			//makes a gap at i 
+			long temp = nums[i];
 			int k;
+			//finds the right location for nums[i]
 			for (k = i; k >= g && nums[k - g] > temp; k -= g) {
 				nums[k] = nums[k - g];
 			}
+			//adds nums[i] to the right spot in the array
 			nums[k] = temp;
 		}
 	}
-	return 0;
+	return nums;
 }
 void printUsage(){
 	cout << "shellsort [input-file-path] [output-file-path]" << endl << endl;
@@ -59,22 +62,23 @@ int main(int arc, char *argv[]) {
 		inputFile.close();
 
 		//now we know how many numbers we read from the file
-		int *numbers = new int[totalNumbersRead];
+		long *numbers = new long[totalNumbersRead];
 
 		//TODO add numbers from stack to the numbers array.
 
-
+		printArray(numbers, totalNumbersRead);
 
 		//sort
 		shellSort(numbers, totalNumbersRead);
 
 
+		printArray(numbers, totalNumbersRead);
 
 		//write sorted array to the output file
 		ofstream outputFile(argv[2]);
 		if(!outputFile.is_open()){
 			cout << "unable to open output file" << endl;
-			return;
+			return 1;
 		}
 		for(int i = 0; i < totalNumbersRead; i++){
 			outputFile << numbers[i] << endl;
