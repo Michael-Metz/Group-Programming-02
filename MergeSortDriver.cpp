@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stack>
+#include <fstream>
 
 using namespace std;
 
@@ -86,17 +88,64 @@ void mergeSort(int a[], int n)
     }
 }
 
-int main()
-{
-    int array[] = {12, 10, 13, 5, 7, 4, 3, 1};
-    int n = sizeof(array) / sizeof(array[0]);
+void printUsage(){
+    cout << "mergesort [input-file-path] [output-file-path]" << endl << endl;
+    cout << "This program reads an input file line by line parsing long values and then sorts them" << endl;
+    cout << "and stores them in the same format, using the output file path" << endl;
 
-    cout << "Original array \n";
-    printArray(array, n);
+}
+bool outputArrayToFile(const long a[], const int& size, char* filePath){
+    ofstream outputFile(filePath);
 
-    mergeSort(array, n);
+    if(!outputFile.is_open()){
+        cout << "unable to open output file" << endl;
+        return false;
+    }
+    for(int i = 0; i < size; i++){
+        outputFile << a[i] << endl;
+    }
+    outputFile.close();
+    return true;
+}
+int main(int arc, char *argv[]) {
 
-    cout << "\nSorted array\n";
-    printArray(array, n);
+    //make sure two arguments are  passed when running the program from command line
+    if(arc != 3) {
+        printUsage();
+        return 0;
+    }
+//    char* inputPath = argv[1];
+    char* outputPath = argv[2];
+
+    ifstream inputFile(argv[1]);
+
+    if(!inputFile.is_open())
+    {
+        cout << "could not open file" << endl;
+    }
+    else
+    {
+        stack <long> numStack;
+        register int numCount = 0;
+        //read input file line by line and add to stack
+        long num;
+        while(inputFile >> num)
+        {
+            numStack.push(num);
+            numCount++;
+        }
+        inputFile.close();
+
+        //now we know how many numbers we read so we can make an array
+        long* numArray = new long[numCount];
+
+        for(int i = numCount-1; 0 <= i; i--){
+            numArray[i] = numStack.top();
+            numStack.pop();
+        }
+
+        outputArrayToFile(numArray,numCount,outputPath);
+        delete[] numArray;
+    }
     return 0;
 }
