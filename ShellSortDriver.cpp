@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
+#include <stack>
 
 using namespace std;
 void printArray(int nums[], int n)
@@ -8,7 +9,7 @@ void printArray(int nums[], int n)
 	for (int i = 0; i < n; i++)
 		cout << nums[i] << " ";
 }
-long[] shellSort(long nums[], long n)
+void shellSort(long nums[], const int& n)
 {	//Starts with a large gap and then decreases
 	for (int g = n / 2; g > 0; g /= 2)
 	{	//gapped insertion sort for this gap size
@@ -25,7 +26,6 @@ long[] shellSort(long nums[], long n)
 			nums[k] = temp;
 		}
 	}
-	return nums;
 }
 void printUsage(){
 	cout << "shellsort [input-file-path] [output-file-path]" << endl << endl;
@@ -33,58 +33,64 @@ void printUsage(){
 	cout << "and stores them in the same format, using the output file path" << endl;
 
 }
+bool outputArrayToFile(const long a[], const int& size, char* filePath){
+	ofstream outputFile(filePath);
+
+	if(!outputFile.is_open()){
+		cout << "unable to open output file" << endl;
+		return false;
+	}
+	for(int i = 0; i < size; i++){
+		outputFile << a[i] << endl;
+	}
+	outputFile.close();
+	return true;
+}
 int main(int arc, char *argv[]) {
+
 	//make sure two arguments are  passed when running the program from command line
-	if (arc != 3) {
+	if(arc != 3) {
 		printUsage();
 		return 0;
 	}
-	//at this point
-	//argv[1] is the path to the input file
-	//argv[2] is the path to save the output file
+//    char* inputPath = argv[1];
+	char* outputPath = argv[2];
 
-	int totalNumbersRead = 0;
 	ifstream inputFile(argv[1]);
 
-	if (!inputFile.is_open())
+	if(!inputFile.is_open())
 	{
 		cout << "could not open file" << endl;
 	}
 	else
 	{
+		stack <long> numStack;
+		register int numCount = 0;
 		//read input file line by line and add to stack
 		long num;
-		while (inputFile >> num)
+		cout << "reading numbers" << endl;
+		while(inputFile >> num)
 		{
-			//TODO add num to stack
-			totalNumbersRead++;
+			numStack.push(num);
+			numCount++;
 		}
 		inputFile.close();
 
-		//now we know how many numbers we read from the file
-		long *numbers = new long[totalNumbersRead];
+		//now we know how many numbers we read so we can make an array
+		long* numArray = new long[numCount];
+		cout << "making array" << endl;
 
-		//TODO add numbers from stack to the numbers array.
-
-		printArray(numbers, totalNumbersRead);
-
-		//sort
-		shellSort(numbers, totalNumbersRead);
-
-
-		printArray(numbers, totalNumbersRead);
-
-		//write sorted array to the output file
-		ofstream outputFile(argv[2]);
-		if(!outputFile.is_open()){
-			cout << "unable to open output file" << endl;
-			return 1;
+		for(int i = numCount-1; 0 <= i; i--){
+			numArray[i] = numStack.top();
+			numStack.pop();
 		}
-		for(int i = 0; i < totalNumbersRead; i++){
-			outputFile << numbers[i] << endl;
-		}
+		cout << "sorting" << endl;
 
-		delete numbers;
+		shellSort(numArray,numCount);
+		cout << "output" << endl;
+
+		outputArrayToFile(numArray,numCount,outputPath);
+		delete[] numArray;
 	}
 	return 0;
 }

@@ -7,12 +7,14 @@
 using namespace std;
 
 // function that merges the two array halves
-void merge(int a[], int l, int m, int r)
+void merge(long a[],const int& l,const int& m,const int& r)
 {
+    cout << "merge" << endl;
+
     int i, j, k;
     int n1 = m - l + 1;
     int n2 = r - m;
-    int tempArray1[n1], tempArray2[n2];
+    long tempArray1[n1], tempArray2[n2];
 
     for (i = 0; i < n1; i++)
         tempArray1[i] = a[l + i];
@@ -56,29 +58,30 @@ void merge(int a[], int l, int m, int r)
     }
 }
 
-// function to find the minimum of two ints
-int min(int x, int y)
+// function to find the minimum of two longs
+int min(long& x, long& y)
 {
     return (x<y)? x:y;
 }
-// prints the sorted array out
-void printArray(int sortedArray[], int size)
-{
-    int i;
-    for (i = 0; i < size; i++)
-        cout << sortedArray[i] << " ";
-    cout << "\n";
-}
+//// prints the sorted array out
+//void printArray(int sortedArray[], int size)
+//{
+//    int i;
+//    for (i = 0; i < size; i++)
+//        cout << sortedArray[i] << " ";
+//    cout << "\n";
+//}
 
 // iterative version of mergesort
-void mergeSort(int a[], int n)
+void mergeSort(long a[], const int& n)
 {
+    cout << "mergeSort" << endl;
     int currentSize;
     int start;
 
     for (currentSize = 1; currentSize <= n-1; currentSize = 2* currentSize)
     {
-        for (start = 0; start <n-1; start = start + (2*currentSize))
+        for (start = 0; start < n-1; start = start + (2*currentSize))
         {
             int mid = start + currentSize - 1;
             int end = min(start + 2*currentSize - 1, n-1);
@@ -129,6 +132,7 @@ int main(int arc, char *argv[]) {
         register int numCount = 0;
         //read input file line by line and add to stack
         long num;
+        cout << "reading numbers" << endl;
         while(inputFile >> num)
         {
             numStack.push(num);
@@ -138,11 +142,16 @@ int main(int arc, char *argv[]) {
 
         //now we know how many numbers we read so we can make an array
         long* numArray = new long[numCount];
+        cout << "making array" << endl;
 
         for(int i = numCount-1; 0 <= i; i--){
             numArray[i] = numStack.top();
             numStack.pop();
         }
+        cout << "sorting" << endl;
+
+        mergeSort(numArray,numCount);
+        cout << "output" << endl;
 
         outputArrayToFile(numArray,numCount,outputPath);
         delete[] numArray;
