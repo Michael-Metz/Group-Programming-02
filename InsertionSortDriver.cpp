@@ -4,16 +4,12 @@
 
 using namespace std;
 
-void printUsage(){
-    cout << "insertionsort [input-file-path] [output-file-path]" << endl << endl;
-    cout << "This program reads an input file line by line parsing long values and then sorts them" << endl;
-    cout << "and stores them in the same format, using the output file path" << endl;
+void printUsage();
 
-}
 int main(int arc, char *argv[]) {
 
     //make sure two arguments are  passed when running the program from command line
-    if(arc != 3) {
+    if (arc != 3) {
         printUsage();
         return 0;
     }
@@ -21,25 +17,34 @@ int main(int arc, char *argv[]) {
     //argv[1] is the path to the input file
     //argv[2] is the path to save the output file
 
-    LinkedList* list = new LinkedList;
+    LinkedList *list = new LinkedList;
     ifstream inputFile(argv[1]);
-    
-    if(!inputFile.is_open())
+
+    if (!inputFile.is_open())
         cout << "could not open file" << endl;
-    else
-    {
+    else {
         //read input file line by line and add to list
-         long num;
-        while(inputFile >> num)
-           list->addTail(num);
-    
-         inputFile.close();
+        long num;
+        while (inputFile >> num)
+            list->addTail(num);
 
-         //sort the list
-         list->insertionSort();
+        inputFile.close();
 
-         //save list to file
-         list->outputToFile(argv[2]);
+        //sort the list
+        list->insertionSort();
+
+        //save list to file
+        list->outputToFile(argv[2]);
     }
     return 0;
+}
+
+/**
+ * Prints the intended usage to the console
+ */
+void printUsage() {
+    cout << "insertionsort [input-file-path] [output-file-path]" << endl << endl;
+    cout << "This program reads an input file line by line parsing long values and then sorts them" << endl;
+    cout << "and stores them in the same format, using the output file path" << endl;
+
 }

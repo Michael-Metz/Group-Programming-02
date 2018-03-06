@@ -6,155 +6,137 @@
 
 using namespace std;
 
-// function that merges the two array halves
-void merge(long a[],const int& l,const int& m,const int& r)
-{
-    cout << "merge" << endl;
+void printUsage();
 
-    int i, j, k;
-    int n1 = m - l + 1;
-    int n2 = r - m;
-    long tempArray1[n1], tempArray2[n2];
+bool outputArrayToFile(const long a[], const int &size, char *filePath);
 
-    for (i = 0; i < n1; i++)
-        tempArray1[i] = a[l + i];
-    for (j = 0; j < n2; j++)
-        tempArray2[j] = a[m + 1 + j];
+void merge(long a[], long temp[], const int &aSize, const int &left, const int &mid, int end);
 
-    i = 0;
-    j = 0;
-    k = l;
+void mergeSort(long a[], const int &aSize);
 
-    // merge the temp arrays into one array
-    while (i < n1 && j < n2)
-    {
-        if (tempArray1[i] <= tempArray2[j])
-        {
-            a[k] = tempArray1[i];
-            i++;
-        }
-        else
-        {
-            a[k] = tempArray2[j];
-            j++;
-        }
-        k++;
-    }
-
-    // copies the remaining elements of the first temp array
-    while (i < n1)
-    {
-        a[k] = tempArray1[i];
-        i++;
-        k++;
-    }
-
-    // copies the remaining elements of the second temp array
-    while (j < n2)
-    {
-        a[k] = tempArray2[j];
-        j++;
-        k++;
-    }
-}
-
-// function to find the minimum of two longs
-int min(long& x, long& y)
-{
-    return (x<y)? x:y;
-}
-//// prints the sorted array out
-//void printArray(int sortedArray[], int size)
-//{
-//    int i;
-//    for (i = 0; i < size; i++)
-//        cout << sortedArray[i] << " ";
-//    cout << "\n";
-//}
-
-// iterative version of mergesort
-void mergeSort(long a[], const int& n)
-{
-    cout << "mergeSort" << endl;
-    int currentSize;
-    int start;
-
-    for (currentSize = 1; currentSize <= n-1; currentSize = 2* currentSize)
-    {
-        for (start = 0; start < n-1; start = start + (2*currentSize))
-        {
-            int mid = start + currentSize - 1;
-            int end = min(start + 2*currentSize - 1, n-1);
-
-            merge(a, start, mid, end);
-        }
-    }
-}
-
-void printUsage(){
-    cout << "mergesort [input-file-path] [output-file-path]" << endl << endl;
-    cout << "This program reads an input file line by line parsing long values and then sorts them" << endl;
-    cout << "and stores them in the same format, using the output file path" << endl;
-
-}
-bool outputArrayToFile(const long a[], const int& size, char* filePath){
-    ofstream outputFile(filePath);
-
-    if(!outputFile.is_open()){
-        cout << "unable to open output file" << endl;
-        return false;
-    }
-    for(int i = 0; i < size; i++){
-        outputFile << a[i] << endl;
-    }
-    outputFile.close();
-    return true;
-}
 int main(int arc, char *argv[]) {
 
     //make sure two arguments are  passed when running the program from command line
-    if(arc != 3) {
+    if (arc != 3) {
         printUsage();
         return 0;
     }
 //    char* inputPath = argv[1];
-    char* outputPath = argv[2];
+    char *outputPath = argv[2];
 
     ifstream inputFile(argv[1]);
 
-    if(!inputFile.is_open())
-    {
+    if (!inputFile.is_open()) {
         cout << "could not open file" << endl;
-    }
-    else
-    {
-        stack <long> numStack;
+    } else {
+        stack<long> numStack;
         register int numCount = 0;
         //read input file line by line and add to stack
         long num;
-        cout << "reading numbers" << endl;
-        while(inputFile >> num)
-        {
+        while (inputFile >> num) {
             numStack.push(num);
             numCount++;
         }
         inputFile.close();
 
         //now we know how many numbers we read so we can make an array
-        long* numArray = new long[numCount];
-        cout << "making array" << endl;
+        long *numArray = new long[numCount];
 
-        for(int i = numCount-1; 0 <= i; i--){
+
+        for (int i = numCount - 1; 0 <= i; i--) {
             numArray[i] = numStack.top();
             numStack.pop();
         }
-        cout << "sorting" << endl;
 
-        mergeSort(numArray,numCount);
-        cout << "output" << endl;
+        mergeSort(numArray, numCount);
 
-        outputArrayToFile(numArray,numCount,outputPath);
+        outputArrayToFile(numArray, numCount, outputPath);
         delete[] numArray;
     }
     return 0;
+}
+
+/**
+ * Sorts an array using bottom up mergesort
+ * requires O(n) extra memory in heap
+ *
+ * @param a - the array to sort
+ * @param aSize - the size of array "a"
+ */
+void mergeSort(long a[], const int &aSize) {
+    long *temp = new long[aSize];
+    int right, end;
+
+    for (int width = 1; width < aSize; width *= 2) {
+        for (int l = 0; l + width < aSize; l += width * 2) {
+            right = l + width;
+            end = right + width;
+            merge(a, temp, aSize, l, right, end);
+        }
+    }
+    delete[] temp;
+}
+
+void merge(long a[], long temp[], const int &aSize, const int &left, const int &mid, int end) {
+
+    if (end > aSize)
+        end = aSize;
+
+    int m = left;
+    int i = left;
+    int j = mid;
+
+    while (i < mid && j < end) {
+        if (a[i] <= a[j]) {
+            temp[m] = a[i];
+            i++;
+        } else {
+            temp[m] = a[j];
+            j++;
+        }
+        m++;
+    }
+    for (; i < mid; i++) {
+        temp[m] = a[i];
+        m++;
+    }
+    for (; j < end; j++) {
+        temp[m] = a[j];
+        m++;
+    }
+    for (m = left; m < end; m++) {
+        a[m] = temp[m];
+    }
+}
+
+/**
+ * Prints the intended usage to the console
+ */
+void printUsage() {
+    cout << "mergesort [input-file-path] [output-file-path]" << endl << endl;
+    cout << "This program reads an input file line by line parsing long values and then sorts them" << endl;
+    cout << "and stores them in the same format, using the output file path" << endl;
+
+}
+
+/**
+ * Output each element in an array to a separate line in a file
+ *
+ * @param a - the array
+ * @param size - the size of the array
+ * @param filePath - the path that you want to save the file
+ * @return true if we are able to save the file
+ */
+bool outputArrayToFile(const long a[], const int &size, char *filePath) {
+    ofstream outputFile(filePath);
+
+    if (!outputFile.is_open()) {
+        cout << "unable to open output file" << endl;
+        return false;
+    }
+    for (int i = 0; i < size; i++) {
+        outputFile << a[i] << endl;
+    }
+    outputFile.close();
+    return true;
 }
