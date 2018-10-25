@@ -4,8 +4,10 @@
 #variable for the compiler
 CC = g++
 
+#tell the compile to use c++ 11 standard
 CFLAGS = -std=c++11 -c
 
+#run "make all" in the command line to compile all 3 programs
 all: insertionsort shellsort mergesort
 
 #insertion sort program
@@ -33,7 +35,7 @@ MergeSortDriver.o:
 	$(CC) $(CFLAGS) MergeSortDriver.cpp
 
 clean:
-	rm *.o insertionsort shellsort mergesort
+	rm *.o
 
 #clean and then compile
 refresh: clean all
